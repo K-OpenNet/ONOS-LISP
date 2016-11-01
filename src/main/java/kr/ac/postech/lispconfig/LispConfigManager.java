@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package kr.ac.postech;
+
+package kr.ac.postech.lispconfig;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -25,6 +26,7 @@ import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.ReferenceCardinality;
+import org.apache.felix.scr.annotations.Service;
 import org.onosproject.core.ApplicationId;
 import org.onosproject.core.CoreService;
 import org.onosproject.net.DeviceId;
@@ -41,10 +43,15 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Skeletal ONOS application component.
+ * NetConf/Yang base LISP data plane configuration tool.
+ * The all methods are base on lispsimple.yang model file.
+ *
+ * See {https://github.com/OpenOverlayRouter/oor/blob/master/netconf/lispsimple.yang}
  */
+
 @Component(immediate = true)
-public class AppComponent {
+@Service
+public class LispConfigManager implements LispConfigService {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -66,15 +73,11 @@ public class AppComponent {
     @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY)
     protected DriverService driverService;
 
-    NetconfController controller;
-
     ComponentContext context;
 
     @Activate
     protected void activate(ComponentContext context) {
         this.context = context;
-
-        connectDevice("lisp", "lisp", "192.168.56.10", "830");
 
         log.info("Started");
     }
@@ -92,15 +95,20 @@ public class AppComponent {
         return "Error to obtain GET_CONFIG";
     }
 
-
-
-    public void connectDevice(String name, String password,
+    public boolean connectDevice(String name, String password,
                                 String address, String port){
-        registerDevice(address, port);
-        configureDevice(name, password, address, port);
+        boolean registered = registerDevice(address, port);
+        boolean configured = configureDevice(name, password, address, port);
+
+        if(registered && configured){
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public void registerDevice(String address, String port){
+    public boolean registerDevice(String address, String port){
+        log.info("{} {}", address, port);
         InputStream is = null;
         try {
             is = context.getBundleContext().getBundle()
@@ -135,12 +143,13 @@ public class AppComponent {
         DeviceId deviceId = DeviceId.deviceId(newDeviceName);
         JsonNode subjectNode = deviceRoot.path(newDeviceName);
 
-        cfgService.applyConfig(DEVICE_SUBJECT_CLASS_KEY, deviceId,
+        Object result = cfgService.applyConfig(DEVICE_SUBJECT_CLASS_KEY, deviceId,
                                DEVICE_CONFIG_KEY,
                                subjectNode.get(DEVICE_CONFIG_KEY));
+        return result == null ? true : false;
     }
 
-    public void configureDevice(String name, String password,
+    public boolean configureDevice(String name, String password,
                                 String address, String port){
         ApplicationId netConfAppId = coreService.getAppId(NETCONF_APP_NAME);
 
@@ -179,8 +188,10 @@ public class AppComponent {
 
         log.info(appRoot.toString());
 
-        cfgService.applyConfig(APP_SUBJECT_CLASS_KEY, netConfAppId,
+        Object result = cfgService.applyConfig(APP_SUBJECT_CLASS_KEY, netConfAppId,
                                APP_CONFIG_KEY, appRoot.path(APP_CONFIG_KEY));
+
+        return result == null ? true : false;
     }
 
     @Deactivate

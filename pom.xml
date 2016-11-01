@@ -13,8 +13,7 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>kr.ac.postech</groupId>
@@ -34,10 +33,8 @@
         <onos.app.category>NETCONF</onos.app.category>
         <onos.app.url>http://www.postech.ac.kr/dpnm</onos.app.url>
         <onos.app.readme>This is yang/netconf base LISP configuration app</onos.app.readme>
-        <onos.app.requires>
-            org.onosproject.netconf,
-            org.onosproject.drivers.netconf
-        </onos.app.requires>
+        <onos.app.requires>org.onosproject.netconf,
+            org.onosproject.drivers.netconf</onos.app.requires>
     </properties>
 
     <dependencies>
@@ -110,6 +107,24 @@
             <artifactId>onos-netconf-api</artifactId>
             <version>1.8.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+      <groupId>org.onosproject</groupId>
+      <artifactId>onos-cli</artifactId>
+      <version>${onos.version}</version>
+      <scope>provided</scope>
+    </dependency>
+        <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>5.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+        <dependency>
+      <groupId>org.apache.karaf.shell</groupId>
+      <artifactId>org.apache.karaf.shell.console</artifactId>
+      <version>3.0.5</version>
+      <scope>provided</scope>
+    </dependency>
     </dependencies>
 
     <build>
