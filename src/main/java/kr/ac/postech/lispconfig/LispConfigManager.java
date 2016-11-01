@@ -125,30 +125,20 @@ public class LispConfigManager implements LispConfigService {
             mapResolverMap.put(deviceId, resolverList);
         }
 
-        StringBuilder builder = new StringBuilder(ITR_HEADER);
-        resolverList.forEach(r -> {
-            builder.append(RESOLVER_BEGIN_TAG);
-            builder.append(r);
-            builder.append(RESOLVER_END_TAG);
-        });
-        builder.append(ITR_FOOTER);
-
-        DriverHandler handler = driverService.createHandler(deviceId);
-        NetconfController controller = handler.get(NetconfController.class);
-
-        try {
-            return controller.getNetconfDevice(deviceId).getSession()
-                    .copyConfig(target, builder.toString());
-        } catch (NetconfException e) {
-            e.printStackTrace();
-        }
-
-        return false;
+        return updateItrMapResolver(deviceId, target);
     }
 
     @Override
     public boolean removeItrMapResolver(DeviceId deviceId, String target, String address) {
-        return false;
+        List<String> resolverList = mapResolverMap.get(deviceId);
+
+        if (resolverList != null) {
+            resolverList.remove(address);
+        } else {
+            log.debug("Map resolver {} is not exist on {}", address, deviceId);
+        }
+
+        return updateItrMapResolver(deviceId, target);
     }
 
     @Override
@@ -251,7 +241,27 @@ public class LispConfigManager implements LispConfigService {
         return result == null ? true : false;
     }
 
+    private boolean updateItrMapResolver(DeviceId deviceId, String target){
+        List<String> resolverList = mapResolverMap.get(deviceId);
 
+        StringBuilder builder = new StringBuilder(ITR_HEADER);
+        resolverList.forEach(r -> {
+            builder.append(RESOLVER_BEGIN_TAG);
+            builder.append(r);
+            builder.append(RESOLVER_END_TAG);
+        });
+        builder.append(ITR_FOOTER);
 
+        DriverHandler handler = driverService.createHandler(deviceId);
+        NetconfController controller = handler.get(NetconfController.class);
+
+        try {
+            return controller.getNetconfDevice(deviceId).getSession()
+                    .copyConfig(target, builder.toString());
+        } catch (NetconfException e) {
+            e.printStackTrace();
+        }
+       return false;
+    }
 
 }
