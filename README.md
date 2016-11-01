@@ -6,4 +6,4 @@ Ths tool is working as an application of ONOS SDN controller. For more informati
 
 https://wiki.onosproject.org/display/ONOS/Wiki+Home
 
-The implementation of LISP mapping system is already implemented on ONOS source tree. You can find out LISP mapping system implementation at org.onosproject.onos-lisp pakage.
+The implementation of LISP mapping system is already contained on ONOS source tree. You can find out LISP mapping system implementation at org.onosproject.onos-lisp pakage.
