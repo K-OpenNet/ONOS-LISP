@@ -21,6 +21,8 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
@@ -29,6 +31,7 @@ import org.apache.felix.scr.annotations.ReferenceCardinality;
 import org.apache.felix.scr.annotations.Service;
 import org.onosproject.core.ApplicationId;
 import org.onosproject.core.CoreService;
+import org.onosproject.net.Device;
 import org.onosproject.net.DeviceId;
 import org.onosproject.net.config.NetworkConfigService;
 import org.onosproject.net.driver.DriverHandler;
@@ -41,6 +44,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 /**
  * NetConf/Yang base LISP data plane configuration tool.
@@ -75,19 +80,35 @@ public class LispConfigManager implements LispConfigService {
 
     ComponentContext context;
 
+    Map<DeviceId, List<String>> mapResolverMap;
+
+    private final static String ITR_HEADER = "<itr-cfg xmlns=\"urn:ietf:params:" +
+            "xml:ns:yang:lispsimple\">\n\t<map-resolvers>\n";
+    private final static String ITR_FOOTER = "\t</map-resolvers>\n</itr-cfg>\n";
+    private final static String RESOLVER_BEGIN_TAG = "\t\t<map-resolver-address>";
+    private final static String RESOLVER_END_TAG = "\t\t</map-resolver-address>";
+
+
     @Activate
     protected void activate(ComponentContext context) {
         this.context = context;
 
+        mapResolverMap = Maps.newConcurrentMap();
         log.info("Started");
     }
 
-    public String getConfig(DeviceId deviceId, String type) {
+    @Deactivate
+    protected void deactivate() {
+        log.info("Stopped");
+    }
+
+    @Override
+    public String getConfig(DeviceId deviceId, String target) {
         DriverHandler handler = driverService.createHandler(deviceId);
         NetconfController controller = handler.get(NetconfController.class);
 
         try {
-            return controller.getNetconfDevice(deviceId).getSession().getConfig(type);
+            return controller.getNetconfDevice(deviceId).getSession().getConfig(target);
         } catch (NetconfException e) {
             e.printStackTrace();
         }
@@ -95,6 +116,42 @@ public class LispConfigManager implements LispConfigService {
         return "Error to obtain GET_CONFIG";
     }
 
+    @Override
+    public boolean addItrMapResolver(DeviceId deviceId, String target, String address) {
+        List<String> resolverList = mapResolverMap.get(deviceId);
+
+        if (resolverList == null) {
+            resolverList = Lists.newLinkedList();
+            mapResolverMap.put(deviceId, resolverList);
+        }
+
+        StringBuilder builder = new StringBuilder(ITR_HEADER);
+        resolverList.forEach(r -> {
+            builder.append(RESOLVER_BEGIN_TAG);
+            builder.append(r);
+            builder.append(RESOLVER_END_TAG);
+        });
+        builder.append(ITR_FOOTER);
+
+        DriverHandler handler = driverService.createHandler(deviceId);
+        NetconfController controller = handler.get(NetconfController.class);
+
+        try {
+            return controller.getNetconfDevice(deviceId).getSession()
+                    .copyConfig(target, builder.toString());
+        } catch (NetconfException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean removeItrMapResolver(DeviceId deviceId, String target, String address) {
+        return false;
+    }
+
+    @Override
     public boolean connectDevice(String name, String password,
                                 String address, String port){
         boolean registered = registerDevice(address, port);
@@ -194,9 +251,7 @@ public class LispConfigManager implements LispConfigService {
         return result == null ? true : false;
     }
 
-    @Deactivate
-    protected void deactivate() {
-        log.info("Stopped");
-    }
+
+
 
 }
