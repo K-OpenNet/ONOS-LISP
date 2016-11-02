@@ -35,14 +35,14 @@ public class LispAddMapResolverCommand extends AbstractShellCommand {
             required = true, multiValued = false)
     String deviceId = null;
 
-    @Argument(index = 1, name = "type", description = "type of config source, " +
+    @Argument(index = 1, name = "address", description = "IP address",
+            required = true, multiValued = false)
+    String address = null;
+
+    @Argument(index = 2, name = "type", description = "type of config source, " +
             "default is running",
             required = false, multiValued = false)
     String target = "running";
-
-    @Argument(index = 2, name = "address", description = "IP address",
-            required = true, multiValued = false)
-    String address = null;
 
     @Override
     protected void execute() {

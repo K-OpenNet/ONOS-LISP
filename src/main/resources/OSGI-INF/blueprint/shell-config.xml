@@ -25,6 +25,9 @@
         <command>
             <action class="kr.ac.postech.lispconfig.cli.LispAddMapResolverCommand"/>
         </command>
+        <command>
+            <action class="kr.ac.postech.lispconfig.cli.LispRemoveMapResolverCommand"/>
+        </command>
     </command-bundle>
 
 </blueprint>
