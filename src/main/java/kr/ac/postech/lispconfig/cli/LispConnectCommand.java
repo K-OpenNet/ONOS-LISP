@@ -38,11 +38,11 @@ public class LispConnectCommand extends AbstractShellCommand {
             required = true, multiValued = false)
     String password = null;
 
-    @Argument(index = 2, name = "password", description = "IP address",
+    @Argument(index = 2, name = "address", description = "IP address",
             required = true, multiValued = false)
     String address = null;
 
-    @Argument(index = 3, name = "password", description = "Port, default is 830",
+    @Argument(index = 3, name = "port", description = "Port, default is 830",
             required = false, multiValued = false)
     String port = "830";
 

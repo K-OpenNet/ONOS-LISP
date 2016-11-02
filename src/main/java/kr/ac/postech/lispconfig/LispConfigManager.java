@@ -29,6 +29,7 @@ import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.ReferenceCardinality;
 import org.apache.felix.scr.annotations.Service;
+import org.onlab.packet.IpAddress;
 import org.onosproject.core.ApplicationId;
 import org.onosproject.core.CoreService;
 import org.onosproject.net.Device;
@@ -37,6 +38,7 @@ import org.onosproject.net.config.NetworkConfigService;
 import org.onosproject.net.driver.DriverHandler;
 import org.onosproject.net.driver.DriverService;
 import org.onosproject.netconf.NetconfController;
+import org.onosproject.netconf.NetconfDevice;
 import org.onosproject.netconf.NetconfException;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
@@ -83,10 +85,10 @@ public class LispConfigManager implements LispConfigService {
     Map<DeviceId, List<String>> mapResolverMap;
 
     private final static String ITR_HEADER = "<itr-cfg xmlns=\"urn:ietf:params:" +
-            "xml:ns:yang:lispsimple\">\n\t<map-resolvers>\n";
-    private final static String ITR_FOOTER = "\t</map-resolvers>\n</itr-cfg>\n";
-    private final static String RESOLVER_BEGIN_TAG = "\t\t<map-resolver-address>";
-    private final static String RESOLVER_END_TAG = "\t\t</map-resolver-address>";
+            "xml:ns:yang:lispsimple\">\n<map-resolvers>\n<map-resolver>";
+    private final static String ITR_FOOTER = "</map-resolver>\n</map-resolvers>\n</itr-cfg>\n";
+    private final static String RESOLVER_BEGIN_TAG = "<map-resolver-address>";
+    private final static String RESOLVER_END_TAG = "</map-resolver-address>\n";
 
 
     @Activate
@@ -125,7 +127,14 @@ public class LispConfigManager implements LispConfigService {
             mapResolverMap.put(deviceId, resolverList);
         }
 
-        return updateItrMapResolver(deviceId, target);
+        if (resolverList.stream().filter(s -> s.equals(address)).count() == 0 ) {
+            resolverList.add(address);
+            return updateItrMapResolver(deviceId, target);
+        } else {
+            log.info("Map resolver {} is already exist", address);
+        }
+
+        return false;
     }
 
     @Override
@@ -134,11 +143,12 @@ public class LispConfigManager implements LispConfigService {
 
         if (resolverList != null) {
             resolverList.remove(address);
+            return updateItrMapResolver(deviceId, target);
         } else {
-            log.debug("Map resolver {} is not exist on {}", address, deviceId);
+            log.info("Map resolver {} is not exist on {}", address, deviceId);
         }
 
-        return updateItrMapResolver(deviceId, target);
+        return false;
     }
 
     @Override
@@ -188,6 +198,7 @@ public class LispConfigManager implements LispConfigService {
         ((ObjectNode) deviceRoot).set(newDeviceName, removed);
 
         DeviceId deviceId = DeviceId.deviceId(newDeviceName);
+
         JsonNode subjectNode = deviceRoot.path(newDeviceName);
 
         Object result = cfgService.applyConfig(DEVICE_SUBJECT_CLASS_KEY, deviceId,
@@ -247,7 +258,15 @@ public class LispConfigManager implements LispConfigService {
         StringBuilder builder = new StringBuilder(ITR_HEADER);
         resolverList.forEach(r -> {
             builder.append(RESOLVER_BEGIN_TAG);
-            builder.append(r);
+            if (IpAddress.valueOf(r).isIp4() ) {
+                builder.append("<ipv4>");
+                builder.append(r);
+                builder.append("</ipv4>");
+            } else {
+                builder.append("<ipv6>");
+                builder.append(r);
+                builder.append("</ipv6>");
+            }
             builder.append(RESOLVER_END_TAG);
         });
         builder.append(ITR_FOOTER);

@@ -22,6 +22,9 @@
         <command>
             <action class="kr.ac.postech.lispconfig.cli.LispConnectCommand"/>
         </command>
+        <command>
+            <action class="kr.ac.postech.lispconfig.cli.LispAddMapResolverCommand"/>
+        </command>
     </command-bundle>
 
 </blueprint>

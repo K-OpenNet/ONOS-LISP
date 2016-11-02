@@ -49,9 +49,5 @@ public class LispAddMapResolverCommand extends AbstractShellCommand {
         LispConfigService service = get(LispConfigService.class);
         DeviceId deviceId = DeviceId.deviceId(this.deviceId);
         boolean result = service.addItrMapResolver(deviceId, target, address);
-
-        if(result){
-            print("Map resolver: {}, is added on {}", address, deviceId);
-        }
     }
 }
