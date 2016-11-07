@@ -119,6 +119,21 @@ public class LispConfigManager implements LispConfigService {
     }
 
     @Override
+    public String getConfigWithFilter(DeviceId deviceId, String target, String filter) {
+        DriverHandler handler = driverService.createHandler(deviceId);
+        NetconfController controller = handler.get(NetconfController.class);
+
+        try {
+            return controller.getNetconfDevice(deviceId).getSession()
+                    .getConfig(target, filter);
+        } catch (NetconfException e) {
+            e.printStackTrace();
+        }
+
+        return "Error to obtain GET_CONFIG for ITR";
+    }
+
+    @Override
     public boolean addItrMapResolver(DeviceId deviceId, String target, String address) {
         List<String> resolverList = mapResolverMap.get(deviceId);
 

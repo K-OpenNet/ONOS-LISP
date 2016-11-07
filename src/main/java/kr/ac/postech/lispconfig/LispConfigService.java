@@ -43,6 +43,16 @@ public interface LispConfigService {
     String getConfig(DeviceId deviceId, String target);
 
     /**
+     * NetConf Get-Config call
+     *
+     * @param deviceId the target device
+     * @param target the scope of config such as running, startup, and candidate
+     * @param filter the filter XML document
+     * @return the get-config result
+     */
+    String getConfigWithFilter(DeviceId deviceId, String target, String filter);
+
+    /**
      * Add Map resolver as an ITR configuration
      *
      * @param deviceId The target device
