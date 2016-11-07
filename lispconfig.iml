@@ -47,6 +47,12 @@
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.4.0" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.4.2" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:3.0.1" level="project" />
+    <orderEntry type="module" module-name="onos-lisp-msg" />
+    <orderEntry type="module" module-name="onos-lisp-api" />
+    <orderEntry type="library" name="Maven: io.netty:netty-buffer:4.0.40.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-common:4.0.40.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-handler:4.0.40.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec:4.0.40.Final" level="project" />
     <orderEntry type="module" module-name="onlab-osgi" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
@@ -109,10 +115,6 @@
     <orderEntry type="library" name="Maven: commons-pool:commons-pool:1.6" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty-transport:4.0.40.Final" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty-transport-native-epoll:4.0.40.Final" level="project" />
-    <orderEntry type="library" name="Maven: io.netty:netty-common:4.0.40.Final" level="project" />
-    <orderEntry type="library" name="Maven: io.netty:netty-buffer:4.0.40.Final" level="project" />
-    <orderEntry type="library" name="Maven: io.netty:netty-handler:4.0.40.Final" level="project" />
-    <orderEntry type="library" name="Maven: io.netty:netty-codec:4.0.40.Final" level="project" />
     <orderEntry type="module" module-name="onos-cli" scope="PROVIDED" />
     <orderEntry type="module" module-name="onos-incubator-api" scope="PROVIDED" />
     <orderEntry type="module" module-name="onos-core-common" scope="PROVIDED" />

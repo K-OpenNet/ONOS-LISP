@@ -32,13 +32,12 @@ import org.apache.felix.scr.annotations.Service;
 import org.onlab.packet.IpAddress;
 import org.onosproject.core.ApplicationId;
 import org.onosproject.core.CoreService;
-import org.onosproject.net.Device;
+import org.onosproject.lisp.msg.protocols.LispMapRecord;
 import org.onosproject.net.DeviceId;
 import org.onosproject.net.config.NetworkConfigService;
 import org.onosproject.net.driver.DriverHandler;
 import org.onosproject.net.driver.DriverService;
 import org.onosproject.netconf.NetconfController;
-import org.onosproject.netconf.NetconfDevice;
 import org.onosproject.netconf.NetconfException;
 import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
@@ -83,6 +82,7 @@ public class LispConfigManager implements LispConfigService {
     ComponentContext context;
 
     Map<DeviceId, List<String>> mapResolverMap;
+    Map<DeviceId, List<LispMapRecord>> eidDbMap;
 
     private final static String ITR_HEADER = "<itr-cfg xmlns=\"urn:ietf:params:" +
             "xml:ns:yang:lispsimple\">\n<map-resolvers>\n<map-resolver>";
@@ -90,6 +90,11 @@ public class LispConfigManager implements LispConfigService {
     private final static String RESOLVER_BEGIN_TAG = "<map-resolver-address>";
     private final static String RESOLVER_END_TAG = "</map-resolver-address>\n";
 
+    private final static String ETR_HEADER = "<etr-cfg xmlns=\"urn:ietf:params:" +
+            "xml:ns:yang:lispsimple\">\n<map-resolvers>\n<map-resolver>";
+    private final static String ETR_FOOTER = "\n</etr-cfg>\n";
+    private final static String LOCAL_EIDS_HEADER = "\n<local-eids>\n";
+    private final static String LOCAL_EIDS_FOOTER = "\n</local-eids>\n";
 
     @Activate
     protected void activate(ComponentContext context) {
@@ -105,12 +110,12 @@ public class LispConfigManager implements LispConfigService {
     }
 
     @Override
-    public String getConfig(DeviceId deviceId, String target) {
+    public String getConfig(DeviceId deviceId) {
         DriverHandler handler = driverService.createHandler(deviceId);
         NetconfController controller = handler.get(NetconfController.class);
 
         try {
-            return controller.getNetconfDevice(deviceId).getSession().getConfig(target);
+            return controller.getNetconfDevice(deviceId).getSession().getConfig("running");
         } catch (NetconfException e) {
             e.printStackTrace();
         }
@@ -119,13 +124,13 @@ public class LispConfigManager implements LispConfigService {
     }
 
     @Override
-    public String getConfigWithFilter(DeviceId deviceId, String target, String filter) {
+    public String getConfigWithFilter(DeviceId deviceId, String filter) {
         DriverHandler handler = driverService.createHandler(deviceId);
         NetconfController controller = handler.get(NetconfController.class);
 
         try {
             return controller.getNetconfDevice(deviceId).getSession()
-                    .getConfig(target, filter);
+                    .getConfig("running", filter);
         } catch (NetconfException e) {
             e.printStackTrace();
         }
@@ -134,7 +139,7 @@ public class LispConfigManager implements LispConfigService {
     }
 
     @Override
-    public boolean addItrMapResolver(DeviceId deviceId, String target, String address) {
+    public boolean addItrMapResolver(DeviceId deviceId, String address) {
         List<String> resolverList = mapResolverMap.get(deviceId);
 
         if (resolverList == null) {
@@ -144,7 +149,7 @@ public class LispConfigManager implements LispConfigService {
 
         if (resolverList.stream().filter(s -> s.equals(address)).count() == 0 ) {
             resolverList.add(address);
-            return updateItrMapResolver(deviceId, target);
+            return updateItrMapResolver(deviceId);
         } else {
             log.info("Map resolver {} is already exist", address);
         }
@@ -153,14 +158,33 @@ public class LispConfigManager implements LispConfigService {
     }
 
     @Override
-    public boolean removeItrMapResolver(DeviceId deviceId, String target, String address) {
+    public boolean removeItrMapResolver(DeviceId deviceId, String address) {
         List<String> resolverList = mapResolverMap.get(deviceId);
 
         if (resolverList != null) {
             resolverList.remove(address);
-            return updateItrMapResolver(deviceId, target);
+            return updateItrMapResolver(deviceId);
         } else {
             log.info("Map resolver {} is not exist on {}", address, deviceId);
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean addEtrEidDataBase(DeviceId deviceId, LispMapRecord record) {
+        List<LispMapRecord> eidDb = eidDbMap.get(deviceId);
+
+        if (eidDb == null) {
+            eidDb = Lists.newLinkedList();
+            eidDbMap.put(deviceId, eidDb);
+        }
+
+        if (eidDb.stream().filter(s -> s.equals(record)).count() == 0 ) {
+            eidDb.add(record);
+            return updateItrMapResolver(deviceId);
+        } else {
+            log.info("Map resolver {} is already exist", record.toString());
         }
 
         return false;
@@ -267,7 +291,7 @@ public class LispConfigManager implements LispConfigService {
         return result == null ? true : false;
     }
 
-    private boolean updateItrMapResolver(DeviceId deviceId, String target){
+    private boolean updateItrMapResolver(DeviceId deviceId){
         List<String> resolverList = mapResolverMap.get(deviceId);
 
         StringBuilder builder = new StringBuilder(ITR_HEADER);
@@ -291,11 +315,68 @@ public class LispConfigManager implements LispConfigService {
 
         try {
             return controller.getNetconfDevice(deviceId).getSession()
-                    .copyConfig(target, builder.toString());
+                    .copyConfig("running", builder.toString());
         } catch (NetconfException e) {
             e.printStackTrace();
         }
        return false;
+    }
+
+    private boolean updateEtrEidDatabase(DeviceId deviceId){
+        List<LispMapRecord> eidDb = eidDbMap.get(deviceId);
+
+
+        StringBuilder builder = new StringBuilder(ETR_HEADER);
+        builder.append(LOCAL_EIDS_HEADER);
+        eidDb.forEach( record -> builder.append(serializeMapRecord(record)));
+        builder.append(LOCAL_EIDS_FOOTER);
+        builder.append(ETR_FOOTER);
+
+        DriverHandler handler = driverService.createHandler(deviceId);
+        NetconfController controller = handler.get(NetconfController.class);
+
+        try {
+            return controller.getNetconfDevice(deviceId).getSession()
+                    .copyConfig("running", builder.toString());
+        } catch (NetconfException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private  String serializeMapRecord(LispMapRecord mapRecord){
+        StringBuilder strBuilder = new StringBuilder();
+        strBuilder.append("<local-eid>");
+
+        //Todo: now only support IPv4
+        strBuilder.append("<eid-address>");
+        if (mapRecord.getEidPrefixAfi().getAfi().getIanaCode() == 1) {
+            strBuilder.append("<afi>").append("ipv4").append("</afi>");
+            strBuilder.append("<ipv4>").append(mapRecord.getEidPrefixAfi().toString()).append("</ipv4>");
+        }
+        strBuilder.append("</eid-address>");
+
+
+        strBuilder.append("<rlocs>");
+        mapRecord.getLocators().forEach(
+                l -> {
+                    strBuilder.append("<rloc>");
+                    if (l.getLocatorAfi().getAfi().getIanaCode() == 1){
+                        strBuilder.append("<afi>").append("ipv4").append("</afi>");
+                        strBuilder.append("<ipv4>").append(l.getLocatorAfi().toString()).append("</ipv4>");
+                    }
+                    strBuilder.append("<priority>").append(l.getPriority()).append("</priority>");
+                    strBuilder.append("<weight>").append(l.getWeight()).append("</weight>");
+                    strBuilder.append("</rloc>");
+                }
+        );
+        strBuilder.append("</rlocs>");
+
+        strBuilder.append("<record-ttl>").append(mapRecord.getRecordTtl()).append("</record-ttl>");
+
+        strBuilder.append("</local-eid>");
+
+        return strBuilder.toString();
     }
 
 }

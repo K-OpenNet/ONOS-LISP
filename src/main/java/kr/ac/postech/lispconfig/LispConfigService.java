@@ -16,6 +16,7 @@
 
 package kr.ac.postech.lispconfig;
 
+import org.onosproject.lisp.msg.protocols.LispMapRecord;
 import org.onosproject.net.DeviceId;
 
 public interface LispConfigService {
@@ -37,38 +38,52 @@ public interface LispConfigService {
      * NetConf Get-Config call
      *
      * @param deviceId the target device
-     * @param target the scope of config such as running, startup, and candidate
      * @return the get-config result
      */
-    String getConfig(DeviceId deviceId, String target);
+    String getConfig(DeviceId deviceId);
 
     /**
      * NetConf Get-Config call
      *
      * @param deviceId the target device
-     * @param target the scope of config such as running, startup, and candidate
      * @param filter the filter XML document
      * @return the get-config result
      */
-    String getConfigWithFilter(DeviceId deviceId, String target, String filter);
+    String getConfigWithFilter(DeviceId deviceId, String filter);
 
     /**
      * Add Map resolver as an ITR configuration
      *
      * @param deviceId The target device
-     * @param target the scope of config such as running, startup, and candidate
      * @param address The address of map resolver to add
      * @return true when a map resolver is added successfully
      */
-    boolean addItrMapResolver(DeviceId deviceId, String target, String address);
+    boolean addItrMapResolver(DeviceId deviceId, String address);
 
     /**
      * Remove Map resolver as an ITR configuration
      *
      * @param deviceId The target device
-     * @param target the scope of config such as running, startup, and candidate
      * @param address The address of map resolver to remove
      * @return true when a map resolver is removed successfully
      */
-    boolean removeItrMapResolver(DeviceId deviceId, String target, String address);
+    boolean removeItrMapResolver(DeviceId deviceId, String address);
+
+    /**
+     * Add Local EID database as an ETR configuration
+     *
+     * @param deviceId The target device
+     * @param record Local EID-RLOC map record
+     * @return true when a map resolver is added successfully
+     */
+    boolean addEtrEidDataBase(DeviceId deviceId, LispMapRecord record);
+
+    /**
+     * Add Local EID database as an ETR configuration
+     *
+     * @param deviceId The target device
+     * @param record Local EID-RLOC map record
+     * @return true when a map resolver is added successfully
+     */
+    boolean removeEtrEidDataBase(DeviceId deviceId, LispMapRecord record);
 }

@@ -44,6 +44,12 @@
             <version>${onos.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.onosproject</groupId>
+            <artifactId>onos-lisp-msg</artifactId>
+            <version>${onos.version}</version>
+        </dependency>
+
         <!--
         <dependency>
             <groupId>org.onosproject</groupId>
@@ -125,6 +131,16 @@
       <version>3.0.5</version>
       <scope>provided</scope>
     </dependency>
+        <dependency>
+            <groupId>org.onosproject</groupId>
+            <artifactId>onos-lisp-msg</artifactId>
+            <version>1.8.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.onosproject</groupId>
+            <artifactId>onos-lisp-msg</artifactId>
+            <version>1.8.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
