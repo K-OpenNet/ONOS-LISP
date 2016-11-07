@@ -13,5 +13,6 @@ You can find out LISP mapping system implementation at org.onosproject.onos-lisp
 #Functions
 - [x] Connect to OOR device using NetConf/Yang
 - [x] Add/remove map resolver on ITR
-- [ ] Add/remove local database(EID) on ETR
+- [x] Add/remove local database(EID) on ETR
+- [ ] IPv6 support
 - [ ] REST API support
