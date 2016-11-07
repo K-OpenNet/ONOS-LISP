@@ -91,16 +91,17 @@ public class LispConfigManager implements LispConfigService {
     private final static String RESOLVER_END_TAG = "</map-resolver-address>\n";
 
     private final static String ETR_HEADER = "<etr-cfg xmlns=\"urn:ietf:params:" +
-            "xml:ns:yang:lispsimple\">\n<map-resolvers>\n<map-resolver>";
-    private final static String ETR_FOOTER = "\n</etr-cfg>\n";
-    private final static String LOCAL_EIDS_HEADER = "\n<local-eids>\n";
-    private final static String LOCAL_EIDS_FOOTER = "\n</local-eids>\n";
+            "xml:ns:yang:lispsimple\">";
+    private final static String ETR_FOOTER = "</etr-cfg>\n";
+    private final static String LOCAL_EIDS_HEADER = "<local-eids>";
+    private final static String LOCAL_EIDS_FOOTER = "</local-eids>";
 
     @Activate
     protected void activate(ComponentContext context) {
         this.context = context;
 
         mapResolverMap = Maps.newConcurrentMap();
+        eidDbMap = Maps.newConcurrentMap();
         log.info("Started");
     }
 
@@ -182,11 +183,16 @@ public class LispConfigManager implements LispConfigService {
 
         if (eidDb.stream().filter(s -> s.equals(record)).count() == 0 ) {
             eidDb.add(record);
-            return updateItrMapResolver(deviceId);
+            return updateEtrEidDatabase(deviceId);
         } else {
-            log.info("Map resolver {} is already exist", record.toString());
+            log.info("EID-RLOC mapping {} is already exist", record.toString());
         }
 
+        return false;
+    }
+
+    @Override
+    public boolean removeEtrEidDataBase(DeviceId deviceId, LispMapRecord record) {
         return false;
     }
 
@@ -336,6 +342,7 @@ public class LispConfigManager implements LispConfigService {
         NetconfController controller = handler.get(NetconfController.class);
 
         try {
+            log.info(builder.toString());
             return controller.getNetconfDevice(deviceId).getSession()
                     .copyConfig("running", builder.toString());
         } catch (NetconfException e) {
@@ -362,8 +369,10 @@ public class LispConfigManager implements LispConfigService {
                 l -> {
                     strBuilder.append("<rloc>");
                     if (l.getLocatorAfi().getAfi().getIanaCode() == 1){
+                        strBuilder.append("<locator-address>");
                         strBuilder.append("<afi>").append("ipv4").append("</afi>");
                         strBuilder.append("<ipv4>").append(l.getLocatorAfi().toString()).append("</ipv4>");
+                        strBuilder.append("</locator-address>");
                     }
                     strBuilder.append("<priority>").append(l.getPriority()).append("</priority>");
                     strBuilder.append("<weight>").append(l.getWeight()).append("</weight>");

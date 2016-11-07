@@ -50,31 +50,6 @@
             <version>${onos.version}</version>
         </dependency>
 
-        <!--
-        <dependency>
-            <groupId>org.onosproject</groupId>
-            <artifactId>onos-netconf-providers</artifactId>
-            <version>${onos.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.onosproject</groupId>
-            <artifactId>onos-netconf-api</artifactId>
-            <version>${onos.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.onosproject</groupId>
-            <artifactId>onos-netconf-ctl</artifactId>
-            <version>${onos.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.onosproject</groupId>
-            <artifactId>onos-drivers-netconf</artifactId>
-            <version>${onos.version}</version>
-        </dependency> -->
-
         <dependency>
             <groupId>org.onosproject</groupId>
             <artifactId>onlab-osgi</artifactId>
@@ -105,26 +80,24 @@
 
         <dependency>
             <groupId>org.onosproject</groupId>
-            <artifactId>onos-yang-maven-plugin</artifactId>
-            <version>1.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.onosproject</groupId>
             <artifactId>onos-netconf-api</artifactId>
             <version>1.8.0-SNAPSHOT</version>
         </dependency>
+
         <dependency>
       <groupId>org.onosproject</groupId>
       <artifactId>onos-cli</artifactId>
       <version>${onos.version}</version>
       <scope>provided</scope>
     </dependency>
+
         <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
       <version>5.0.0</version>
       <scope>provided</scope>
     </dependency>
+
         <dependency>
       <groupId>org.apache.karaf.shell</groupId>
       <artifactId>org.apache.karaf.shell.console</artifactId>
@@ -133,14 +106,10 @@
     </dependency>
         <dependency>
             <groupId>org.onosproject</groupId>
-            <artifactId>onos-lisp-msg</artifactId>
-            <version>1.8.0-SNAPSHOT</version>
+            <artifactId>org.apache.felix.scr.bnd</artifactId>
+            <version>1.4.1-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>org.onosproject</groupId>
-            <artifactId>onos-lisp-msg</artifactId>
-            <version>1.8.0-SNAPSHOT</version>
-        </dependency>
+
     </dependencies>
 
     <build>

@@ -31,6 +31,9 @@
         <command>
             <action class="kr.ac.postech.lispconfig.cli.LispGetMapResolverCommand"/>
         </command>
+        <command>
+            <action class="kr.ac.postech.lispconfig.cli.LispAddLocalMapRecordCommand"/>
+        </command>
     </command-bundle>
 
 </blueprint>

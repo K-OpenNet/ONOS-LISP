@@ -36,16 +36,11 @@ public class LispGetCommand extends AbstractShellCommand {
             required = true, multiValued = false)
     String deviceId = null;
 
-    @Argument(index = 1, name = "type", description = "type of config source, " +
-            "default is running",
-            required = false, multiValued = false)
-    String type = "running";
-
     @Override
     protected void execute() {
         LispConfigService service = get(LispConfigService.class);
         DeviceId deviceId = DeviceId.deviceId(this.deviceId);
-        String result = service.getConfig(deviceId, type);
+        String result = service.getConfig(deviceId);
 
         print(result);
     }

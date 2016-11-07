@@ -19,6 +19,7 @@
     <feature name="${project.artifactId}" version="${project.version}"
              description="${project.description}">
         <bundle>mvn:${project.groupId}/lispconfig/${project.version}</bundle>
+        <bundle>mvn:org.onosproject/onos-lisp-msg/${onos.version}</bundle>
     </feature>
 </features>
 

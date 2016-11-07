@@ -39,15 +39,10 @@ public class LispRemoveMapResolverCommand extends AbstractShellCommand {
             required = true, multiValued = false)
     String address = null;
 
-    @Argument(index = 2, name = "type", description = "type of config source, " +
-            "default is running",
-            required = false, multiValued = false)
-    String target = "running";
-
     @Override
     protected void execute() {
         LispConfigService service = get(LispConfigService.class);
         DeviceId deviceId = DeviceId.deviceId(this.deviceId);
-        boolean result = service.removeItrMapResolver(deviceId, target, address);
+        boolean result = service.removeItrMapResolver(deviceId, address);
     }
 }
