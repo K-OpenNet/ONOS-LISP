@@ -193,6 +193,15 @@ public class LispConfigManager implements LispConfigService {
 
     @Override
     public boolean removeEtrEidDataBase(DeviceId deviceId, LispMapRecord record) {
+        List<LispMapRecord> eidDb = eidDbMap.get(deviceId);
+
+        if (eidDb == null) {
+            eidDb.remove(record);
+            return updateEtrEidDatabase(deviceId);
+        } else {
+            log.info("map record is not exist");
+        }
+
         return false;
     }
 

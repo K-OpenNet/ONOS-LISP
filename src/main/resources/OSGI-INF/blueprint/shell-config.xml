@@ -34,6 +34,12 @@
         <command>
             <action class="kr.ac.postech.lispconfig.cli.LispAddLocalMapRecordCommand"/>
         </command>
+        <command>
+            <action class="kr.ac.postech.lispconfig.cli.LispRemoveLocalMapRecordCommand"/>
+        </command>
+        <command>
+            <action class="kr.ac.postech.lispconfig.cli.LispGetLocalDbCommand"/>
+        </command>
     </command-bundle>
 
 </blueprint>
