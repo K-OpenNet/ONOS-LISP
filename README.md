@@ -41,7 +41,8 @@ All commands are excuted on ONOS CLI.
   Example) ```lisp-remove-map-resolver netconf:192.168.10.1:830 1.1.1.1```
 
 * **Get map configured map resolvers of a device**
-  ```onos> lisp-get-map-resolver {deviceId}```
+
+```onos> lisp-get-map-resolver {deviceId}```
   
   Exmaple) ```lisp-get-map-resolver netconf:192.168.10.1:830```
   
