@@ -15,6 +15,7 @@ You can find out LISP mapping system implementation at org.onosproject.onos-lisp
 - [x] Add/remove map resolver on ITR
 - [x] Add/remove local database(EID) on ETR
 - [x] REST API support
+- [ ] REST API JSON support to configure multiple locators 
 - [ ] IPv6 support
 
 #Usage through ONOS CLI
@@ -26,26 +27,26 @@ All commands are excuted on ONOS CLI.
 
   Example) ```lisp-connect foo bar 192.168.10.1 830```
   
-* **Add Map resover to the device**
-
-  ```onos> lisp-add-map-resolver {deviceId} {resolver-address}```
-
-  Note) deviceId can be referred using ONOS `devices` command. 
-
-  Example) ```lisp-add-map-resolver netconf:192.168.10.1:830 1.1.1.1```
-
-* **Remove Map resover to the device**
-
-  ```onos> lisp-remove-map-resolver {deviceId} {resolver-address}```
-
-  Example) ```lisp-remove-map-resolver netconf:192.168.10.1:830 1.1.1.1```
-
 * **Get map configured map resolvers of a device**
 
   ```onos> lisp-get-map-resolver {deviceId}```
   
   Exmaple) ```lisp-get-map-resolver netconf:192.168.10.1:830```
   
+* **Add Map resover to the device**
+
+  ```onos> lisp-add-map-resolver {deviceId} {resolver-address}```
+
+  Note) deviceId can be referred using ONOS `devices` command. 
+
+  Example) ```lisp-add-map-resolver netconf:192.168.10.1:830 10.10.10.10```
+
+* **Remove Map resover to the device**
+
+  ```onos> lisp-remove-map-resolver {deviceId} {resolver-address}```
+
+  Example) ```lisp-remove-map-resolver netconf:192.168.10.1:830 10.10.10.10```
+
 * **Add local Eid database**
 
   ```onos> lisp-add-local-eid {deviceId} {EID} {netmask} {RLOC} {Priority} {Weight}```
@@ -77,11 +78,50 @@ All commands are excuted on ONOS CLI.
          "Description": "This tool is developed to configure OOR (Open Overay Router, a dataplane implementation of LISP) through NetConf/Yang"    
     }    
 
+* **Get list of connected OOR devices**
+
+    GET ``` onos/lispconfig/devices ```
+    
+    exmaple) ``` 127.0.0.1:8181/onos/lispconfig/devices ```
+   
 * **Connect to OOR device through NetConf**
 
-    ``` onos/lispconfig/devices?username={id}&password={password}&address={address}&port={port} ```
+    POST ``` onos/lispconfig/devices?username={id}&password={password}&address={address}&port={port} ```
     
     exmaple) ```127.0.0.1:8181/onos/lispconfig/devices?username=foo&password=bar&address=192.168.10.1&port=830```
-    
-    
 
+* **Get added map resover from the device**
+
+    GET ``` onos/lispconfig/{deviceId}/map-resolver ```
+    
+    exmaple) ```127.0.0.1:8181/onos/lispconfig/netconf:192.168.56.10:830/map-resolver
+
+* **Add Map resover to the device**
+
+    POST ``` onos/lispconfig/{deviceId}/map-resolver?address={address} ```
+    
+    exmaple) ```127.0.0.1:8181/onos/lispconfig/netconf:192.168.56.10:830/map-resolver?address=10.10.10.10
+    
+* **Remove Map resover to the device**
+
+    DELETE ``` onos/lispconfig/{deviceId}/map-resolver?address={address} ```
+    
+    exmaple) ```127.0.0.1:8181/onos/lispconfig/netconf:192.168.56.10:830/map-resolver?address=10.10.10.10
+
+* **Get configured local db of a device**
+
+    GET ``` onos/lispconfig/{deviceId}/local-db ```
+    
+    exmaple) ```127.0.0.1:8181/onos/lispconfig/netconf:192.168.56.10:830/local-db ```
+    
+* **Add local db of a device**
+
+    POST ``` onos/lispconfig/{deviceId}/local-db?eid={eid}&eid_mask={eid_mask}&rloc={rloc}&priority={prioriry}&weight={weight}```
+    
+    exmpale) ```127.0.0.1:8181/onos/lispconfig/netconf:192.168.56.10:830/local-db?eid=1.1.1.1&eid_maks=32&rloc=192.168.56.10&priority=1&weight=100 ```
+    
+* **Remove local db of a device**
+
+    DELETE ``` onos/lispconfig/{deviceId}/local-db?eid={eid}&eid_mask={eid_mask}&rloc={rloc}&priority={prioriry}&weight={weight}```
+    
+    exmpale) ```127.0.0.1:8181/onos/lispconfig/netconf:192.168.56.10:830/local-db?eid=1.1.1.1&eid_maks=32&rloc=192.168.56.10&priority=1&weight=100 ```
