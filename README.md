@@ -77,3 +77,11 @@ All commands are excuted on ONOS CLI.
          "Description": "This tool is developed to configure OOR (Open Overay Router, a dataplane implementation of LISP) through NetConf/Yang"    
     }    
 
+* **Connect to OOR device through NetConf**
+
+    ``` onos/lispconfig/devices?username={id}&password={password}&address={address}&port={port} ```
+    
+    exmaple) ```127.0.0.1:8181/onos/lispconfig/devices?username=foo&password=bar&address=192.168.10.1&port=830```
+    
+    
+
