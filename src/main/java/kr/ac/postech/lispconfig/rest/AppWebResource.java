@@ -17,19 +17,28 @@
 package kr.ac.postech.lispconfig.rest;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import kr.ac.postech.lispconfig.LispConfigService;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
+import org.onosproject.net.DeviceId;
 import org.onosproject.rest.AbstractWebResource;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Set;
 
-import static org.onlab.util.Tools.nullIsNotFound;
 
 /**
  * Sample web resource.
  */
-@Path("sample")
+@Path("")
 public class AppWebResource extends AbstractWebResource {
+
+    static final String ITR_CFG = "<itr-cfg/>";
 
     /**
      * Get hello world greeting.
@@ -37,10 +46,26 @@ public class AppWebResource extends AbstractWebResource {
      * @return 200 OK
      */
     @GET
-    @Path("")
+    @Path("hello")
     public Response getGreeting() {
-        ObjectNode node = mapper().createObjectNode().put("hello", "world");
+        ObjectNode node = mapper().createObjectNode().put("AppName", "Lispconfig");
+        node.put("Version", "1.0.0");
+        node.put("Description", "This tool is developed to configure OOR " +
+                "(Open Overay Router, a dataplane implementation of LISP) " +
+                "through NetConf/Yang");
+
         return ok(node).build();
+    }
+
+    @GET
+    @Path("/map-resolver/{deviceId}")
+    public Response getMapResolver(@PathParam("deviceId") String deviceId) {
+
+        LispConfigService service = get(LispConfigService.class);
+        DeviceId devId = DeviceId.deviceId(deviceId);
+        String result = service.getConfigWithFilter(devId, ITR_CFG);
+
+        return ok(result).build();
     }
 
 }

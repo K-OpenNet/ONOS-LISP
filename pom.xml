@@ -150,8 +150,9 @@
       <version>${onos.version}</version>
       <scope>provided</scope>
     </dependency>
-
     </dependencies>
+
+
 
     <build>
         <plugins>
