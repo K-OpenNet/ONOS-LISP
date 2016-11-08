@@ -27,12 +27,17 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <onos.version>1.8.0-SNAPSHOT</onos.version>
+        <api.version>1.0.0</api.version>
         <onos.app.name>kr.ac.postech</onos.app.name>
         <onos.app.title>lispconfig</onos.app.title>
         <onos.app.origin>POSTECH</onos.app.origin>
         <onos.app.category>NETCONF</onos.app.category>
+        <api.description>Sample application REST API</api.description>
         <onos.app.url>http://www.postech.ac.kr/dpnm</onos.app.url>
+        <web.context>/onos/lispconfig</web.context>
+        <api.title>Sample app REST API</api.title>
         <onos.app.readme>This is yang/netconf base LISP configuration app</onos.app.readme>
+        <api.package>kr.ac.postech</api.package>
         <onos.app.requires>org.onosproject.netconf,
             org.onosproject.drivers.netconf</onos.app.requires>
     </properties>
@@ -109,6 +114,42 @@
             <artifactId>org.apache.felix.scr.bnd</artifactId>
             <version>1.4.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+      <groupId>javax.ws.rs</groupId>
+      <artifactId>javax.ws.rs-api</artifactId>
+      <version>2.0.1</version>
+      <scope>provided</scope>
+    </dependency>
+        <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.7.3</version>
+      <scope>provided</scope>
+    </dependency>
+        <dependency>
+      <groupId>org.onosproject</groupId>
+      <artifactId>onos-rest</artifactId>
+      <version>${onos.version}</version>
+      <scope>provided</scope>
+    </dependency>
+        <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>2.7.3</version>
+      <scope>provided</scope>
+    </dependency>
+        <dependency>
+      <groupId>org.glassfish.jersey.containers</groupId>
+      <artifactId>jersey-container-servlet</artifactId>
+      <version>2.22.2</version>
+      <scope>provided</scope>
+    </dependency>
+        <dependency>
+      <groupId>org.onosproject</groupId>
+      <artifactId>onlab-rest</artifactId>
+      <version>${onos.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
     </dependencies>
 
@@ -119,6 +160,16 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <version>3.0.1</version>
                 <extensions>true</extensions>
+                <configuration>
+          <instructions>
+            <_wab>src/main/webapp/</_wab>
+            <Include-Resource>WEB-INF/classes/apidoc/swagger.json=target/swagger.json,
+                            {maven-resources}</Include-Resource>
+            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+            <Import-Package>*,org.glassfish.jersey.servlet</Import-Package>
+            <Web-ContextPath>${web.context}</Web-ContextPath>
+          </instructions>
+        </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
