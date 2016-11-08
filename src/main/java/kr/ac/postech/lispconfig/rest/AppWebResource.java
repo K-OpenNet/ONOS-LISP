@@ -16,20 +16,22 @@
 
 package kr.ac.postech.lispconfig.rest;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import kr.ac.postech.lispconfig.LispConfigService;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
 import org.onosproject.net.DeviceId;
+import org.onosproject.net.device.DeviceService;
 import org.onosproject.rest.AbstractWebResource;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.Set;
 
 
 /**
@@ -59,13 +61,55 @@ public class AppWebResource extends AbstractWebResource {
 
     @GET
     @Path("/map-resolver/{deviceId}")
-    public Response getMapResolver(@PathParam("deviceId") String deviceId) {
+    @Produces(MediaType.APPLICATION_XML)
+    public Response getMapResolvers(@PathParam("deviceId") String deviceId) {
 
         LispConfigService service = get(LispConfigService.class);
         DeviceId devId = DeviceId.deviceId(deviceId);
         String result = service.getConfigWithFilter(devId, ITR_CFG);
 
         return ok(result).build();
+    }
+
+    @POST
+    @Path("/map-resolver/{deviceId}")
+    public Response addMapResolvers(@PathParam("deviceId") String deviceId,
+    @QueryParam("address") String address) {
+
+        LispConfigService service = get(LispConfigService.class);
+        DeviceId devId = DeviceId.deviceId(deviceId);
+        boolean result = service.addItrMapResolver(devId, address);
+
+        return ok(result).build();
+    }
+
+    @POST
+    @Path("/devices")
+    public Response connect(@QueryParam("username") String username,
+                            @QueryParam("password") String password,
+                            @QueryParam("address") String address,
+                            @QueryParam("port") String port
+                            ) {
+
+        LispConfigService service = get(LispConfigService.class);
+        boolean result = service.connectDevice(username, password, address, port);
+
+        return ok(result).build();
+    }
+
+    @GET
+    @Path("/devices")
+    public Response getDevices() {
+        DeviceService deviceService = get(DeviceService.class);
+        ObjectNode node = mapper().createObjectNode();
+        ArrayNode arrayNode = node.putArray("devices");
+
+        deviceService.getDevices().forEach(
+                d -> arrayNode.add(mapper().createObjectNode()
+                                           .put("deviceId", d.id().toString()))
+        );
+
+        return ok(node).build();
     }
 
 }

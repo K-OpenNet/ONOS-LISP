@@ -258,7 +258,7 @@ public class LispConfigManager implements LispConfigService {
         Object result = cfgService.applyConfig(DEVICE_SUBJECT_CLASS_KEY, deviceId,
                                DEVICE_CONFIG_KEY,
                                subjectNode.get(DEVICE_CONFIG_KEY));
-        return result == null ? true : false;
+        return result != null ? true : false;
     }
 
     public boolean configureDevice(String name, String password,
@@ -303,7 +303,7 @@ public class LispConfigManager implements LispConfigService {
         Object result = cfgService.applyConfig(APP_SUBJECT_CLASS_KEY, netConfAppId,
                                APP_CONFIG_KEY, appRoot.path(APP_CONFIG_KEY));
 
-        return result == null ? true : false;
+        return result != null ? true : false;
     }
 
     private boolean updateItrMapResolver(DeviceId deviceId){
