@@ -14,8 +14,8 @@ You can find out LISP mapping system implementation at org.onosproject.onos-lisp
 - [x] Connect to OOR device using NetConf/Yang
 - [x] Add/remove map resolver on ITR
 - [x] Add/remove local database(EID) on ETR
+- [x] REST API support
 - [ ] IPv6 support
-- [ ] REST API support
 
 #Usage through ONOS CLI
 All commands are excuted on ONOS CLI. 
@@ -60,6 +60,20 @@ All commands are excuted on ONOS CLI.
   
 * **Get configured local db of a device**
 
-  ```onos> lisp-get-local-db" {deviceId}```
+  ```onos> lisp-get-local-db {deviceId}```
   
   Exmaple) ```lisp-get-local-db" netconf:192.168.10.1:830```
+  
+#Usage through ONOS REST APIs
+  The default web path for rest apis is "/onos/lispconfig".
+  If you are running ONOS in localhost, then, the APIs can called throguh "127.0.0.1:8181/onos/lispconfig/".
+  
+  To test the app is sucessfully installed, you can try with "127.0.0.1:8181/onos/lispconfig/hello".
+  You will see the following result. 
+  
+    {     
+        "AppName": "Lispconfig",    
+         "Version": "1.0.0",    
+         "Description": "This tool is developed to configure OOR (Open Overay Router, a dataplane implementation of LISP) through NetConf/Yang"    
+    }    
+
