@@ -153,7 +153,7 @@ public class AppWebResource extends AbstractWebResource {
                                @QueryParam("priority") byte priority,
                                @QueryParam("weight") byte weight,
                                InputStream inputStream) {
-        if(inputStream == null) {
+        if(eid != null) {
             LispConfigService service = get(LispConfigService.class);
             DeviceId devId = DeviceId.deviceId(deviceId);
 
