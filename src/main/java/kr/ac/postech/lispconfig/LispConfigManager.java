@@ -174,6 +174,7 @@ public class LispConfigManager implements LispConfigService {
 
     @Override
     public boolean addEtrEidDataBase(DeviceId deviceId, LispMapRecord record) {
+        log.info(record.toString());
         List<LispMapRecord> eidDb = eidDbMap.get(deviceId);
 
         if (eidDb == null) {
