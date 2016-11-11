@@ -153,27 +153,32 @@ public class AppWebResource extends AbstractWebResource {
                                @QueryParam("priority") byte priority,
                                @QueryParam("weight") byte weight,
                                InputStream inputStream) {
-        LispConfigService service = get(LispConfigService.class);
-        DeviceId devId = DeviceId.deviceId(deviceId);
+        if(eid != null) {
+            LispConfigService service = get(LispConfigService.class);
+            DeviceId devId = DeviceId.deviceId(deviceId);
 
-        DefaultLispMapRecord.DefaultMapRecordBuilder builder =
-                new DefaultLispMapRecord.DefaultMapRecordBuilder();
+            DefaultLispMapRecord.DefaultMapRecordBuilder builder =
+                    new DefaultLispMapRecord.DefaultMapRecordBuilder();
 
-        builder.withEidPrefixAfi(new LispIpv4Address(IpAddress.valueOf(eid)));
-        builder.withMaskLength(eid_mask);
+            builder.withEidPrefixAfi(new LispIpv4Address(IpAddress.valueOf(eid)));
+            builder.withMaskLength(eid_mask);
 
-        DefaultLispLocatorRecord.DefaultLocatorRecordBuilder locatorRecordBuilder
-                = new DefaultLispLocatorRecord.DefaultLocatorRecordBuilder();
+            DefaultLispLocatorRecord.DefaultLocatorRecordBuilder locatorRecordBuilder
+                    = new DefaultLispLocatorRecord.DefaultLocatorRecordBuilder();
 
-        locatorRecordBuilder.withLocatorAfi(new LispIpv4Address(IpAddress.valueOf(rloc)));
-        locatorRecordBuilder.withPriority(priority);
-        locatorRecordBuilder.withWeight(weight);
+            locatorRecordBuilder.withLocatorAfi(new LispIpv4Address(IpAddress.valueOf(rloc)));
+            locatorRecordBuilder.withPriority(priority);
+            locatorRecordBuilder.withWeight(weight);
 
-        builder.withLocators(ImmutableList.of(locatorRecordBuilder.build()));
+            builder.withLocators(ImmutableList.of(locatorRecordBuilder.build()));
 
-        Boolean result = service.addEtrEidDataBase(devId, builder.build());
+            Boolean result = service.addEtrEidDataBase(devId, builder.build());
 
-        return ok("abc").build();
+            return ok("abc").build();
+        } else {
+            //TODO: JSON support
+        }
+        return ok(false).build();
     }
 
     @DELETE
