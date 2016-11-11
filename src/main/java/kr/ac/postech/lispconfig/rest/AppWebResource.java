@@ -174,7 +174,7 @@ public class AppWebResource extends AbstractWebResource {
 
             Boolean result = service.addEtrEidDataBase(devId, builder.build());
 
-            return ok(result).build();
+            return ok("abc").build();
         } else {
             //TODO: JSON support
         }
