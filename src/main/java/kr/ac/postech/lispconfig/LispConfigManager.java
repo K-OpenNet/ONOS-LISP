@@ -196,7 +196,7 @@ public class LispConfigManager implements LispConfigService {
     public boolean removeEtrEidDataBase(DeviceId deviceId, LispMapRecord record) {
         List<LispMapRecord> eidDb = eidDbMap.get(deviceId);
 
-        if (eidDb == null) {
+        if (eidDb != null) {
             eidDb.remove(record);
             return updateEtrEidDatabase(deviceId);
         } else {

@@ -152,6 +152,7 @@ public class AppWebResource extends AbstractWebResource {
                                @QueryParam("rloc") String rloc,
                                @QueryParam("priority") byte priority,
                                @QueryParam("weight") byte weight,
+                               @QueryParam("ttl") int ttl,
                                InputStream inputStream) {
         if(eid != null) {
             LispConfigService service = get(LispConfigService.class);
@@ -162,6 +163,7 @@ public class AppWebResource extends AbstractWebResource {
 
             builder.withEidPrefixAfi(new LispIpv4Address(IpAddress.valueOf(eid)));
             builder.withMaskLength(eid_mask);
+            builder.withRecordTtl(ttl);
 
             DefaultLispLocatorRecord.DefaultLocatorRecordBuilder locatorRecordBuilder
                     = new DefaultLispLocatorRecord.DefaultLocatorRecordBuilder();
@@ -190,6 +192,7 @@ public class AppWebResource extends AbstractWebResource {
                                @QueryParam("rloc") String rloc,
                                @QueryParam("priority") byte priority,
                                @QueryParam("weight") byte weight,
+                               @QueryParam("ttl") int ttl,
                                InputStream inputStream) {
         if(eid != null) {
             LispConfigService service = get(LispConfigService.class);
@@ -207,6 +210,7 @@ public class AppWebResource extends AbstractWebResource {
             locatorRecordBuilder.withLocatorAfi(new LispIpv4Address(IpAddress.valueOf(rloc)));
             locatorRecordBuilder.withPriority(priority);
             locatorRecordBuilder.withWeight(weight);
+            builder.withRecordTtl(ttl);
 
             builder.withLocators(ImmutableList.of(locatorRecordBuilder.build()));
 
