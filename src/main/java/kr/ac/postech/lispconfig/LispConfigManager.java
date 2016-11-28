@@ -189,13 +189,12 @@ public class LispConfigManager implements LispConfigService {
                 .collect(Collectors.toList());
         if (records.size() == 0) {
             eidDb.add(record);
-            return updateEtrEidDatabase(deviceId);
         } else {
             records.forEach(eidDb::remove);
             eidDb.add(record);
         }
 
-        return false;
+        return updateEtrEidDatabase(deviceId);
     }
 
     @Override
