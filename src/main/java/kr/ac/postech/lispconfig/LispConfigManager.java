@@ -185,17 +185,15 @@ public class LispConfigManager implements LispConfigService {
 
         List<LispMapRecord> records = eidDb.stream()
             .filter(s -> s.getEidPrefixAfi().equals(record.getEidPrefixAfi()))
-            .filter(s -> s.getLocators().equals(record.getLocators()))
                 .collect(Collectors.toList());
         if (records.size() == 0) {
             eidDb.add(record);
-            return updateEtrEidDatabase(deviceId);
         } else {
             records.forEach(eidDb::remove);
             eidDb.add(record);
         }
 
-        return false;
+        return updateEtrEidDatabase(deviceId);
     }
 
     @Override
