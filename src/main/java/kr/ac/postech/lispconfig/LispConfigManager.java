@@ -184,11 +184,13 @@ public class LispConfigManager implements LispConfigService {
         }
 
         List<LispMapRecord> records = eidDb.stream()
-            .filter(s -> s.getEidPrefixAfi().equals(record.getEidPrefixAfi()))
+                .filter(s -> s.getEidPrefixAfi().equals(record.getEidPrefixAfi()))
                 .collect(Collectors.toList());
         if (records.size() == 0) {
+            log.info("Add new map record");
             eidDb.add(record);
         } else {
+            log.info("Update map record");
             records.forEach(eidDb::remove);
             eidDb.add(record);
         }
