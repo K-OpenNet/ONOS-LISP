@@ -38,8 +38,11 @@
         <api.title>Sample app REST API</api.title>
         <onos.app.readme>This is yang/netconf base LISP configuration app</onos.app.readme>
         <api.package>kr.ac.postech</api.package>
-        <onos.app.requires>org.onosproject.netconf,
-            org.onosproject.drivers.netconf</onos.app.requires>
+        <onos.app.requires>
+            org.onosproject.netconf,
+            org.onosproject.drivers.netconf,
+            org.onosproject.lisp
+        </onos.app.requires>
     </properties>
 
     <dependencies>
