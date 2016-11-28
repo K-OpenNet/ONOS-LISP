@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * NetConf/Yang base LISP data plane configuration tool.
@@ -182,11 +183,16 @@ public class LispConfigManager implements LispConfigService {
             eidDbMap.put(deviceId, eidDb);
         }
 
-        if (eidDb.stream().filter(s -> s.equals(record)).count() == 0 ) {
+        List<LispMapRecord> records = eidDb.stream()
+            .filter(s -> s.getEidPrefixAfi().equals(record.getEidPrefixAfi()))
+            .filter(s -> s.getLocators().equals(record.getLocators()))
+                .collect(Collectors.toList());
+        if (records.size() == 0) {
             eidDb.add(record);
             return updateEtrEidDatabase(deviceId);
         } else {
-            log.info("EID-RLOC mapping {} is already exist", record.toString());
+            records.forEach(eidDb::remove);
+            eidDb.add(record);
         }
 
         return false;
@@ -200,7 +206,7 @@ public class LispConfigManager implements LispConfigService {
             eidDb.remove(record);
             return updateEtrEidDatabase(deviceId);
         } else {
-            log.info("map record is not exist");
+            log.info("EID-RLOC mapping record {} is not exist", record.toString());
         }
 
         return false;
