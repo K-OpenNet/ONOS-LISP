@@ -32,7 +32,10 @@ import org.apache.felix.scr.annotations.Service;
 import org.onlab.packet.IpAddress;
 import org.onosproject.core.ApplicationId;
 import org.onosproject.core.CoreService;
+import org.onosproject.lisp.msg.protocols.DefaultLispMapRecord;
+import org.onosproject.lisp.msg.protocols.LispLocatorRecord;
 import org.onosproject.lisp.msg.protocols.LispMapRecord;
+import org.onosproject.lisp.msg.types.LispIpv4Address;
 import org.onosproject.net.DeviceId;
 import org.onosproject.net.config.NetworkConfigService;
 import org.onosproject.net.driver.DriverHandler;
@@ -190,9 +193,34 @@ public class LispConfigManager implements LispConfigService {
             log.info("Add new map record");
             eidDb.add(record);
         } else {
-            log.info("Update map record");
-            records.forEach(eidDb::remove);
-            eidDb.add(record);
+            log.info("Update new map record");
+            LispMapRecord oldRecord = records.get(0);
+
+            List<LispLocatorRecord> newLocators = record.getLocators();
+            List<LispLocatorRecord> oldLocators = oldRecord.getLocators();
+
+            List<LispLocatorRecord> actualLocators = Lists.newArrayList();
+            actualLocators.addAll(newLocators);
+            actualLocators.addAll(oldLocators);
+
+            for (LispLocatorRecord loc : newLocators) {
+                for (LispLocatorRecord ol : oldLocators) {
+                    if(loc.getLocatorAfi().equals(ol.getLocatorAfi())){
+                        actualLocators.remove(ol);
+                    }
+                }
+            }
+
+            DefaultLispMapRecord.DefaultMapRecordBuilder builder =
+                    new DefaultLispMapRecord.DefaultMapRecordBuilder();
+
+            builder.withEidPrefixAfi(record.getEidPrefixAfi());
+            builder.withMaskLength(record.getMaskLength());
+            builder.withRecordTtl(record.getRecordTtl());
+            builder.withLocators(actualLocators);
+
+            eidDb.remove(oldRecord);
+            eidDb.add(builder.build());
         }
 
         return updateEtrEidDatabase(deviceId);
