@@ -186,6 +186,7 @@ public class LispConfigManager implements LispConfigService {
             eidDbMap.put(deviceId, eidDb);
         }
 
+        log.info("Trace Point 1");
         List<LispMapRecord> records = eidDb.stream()
                 .filter(s -> s.getEidPrefixAfi().equals(record.getEidPrefixAfi()))
                 .collect(Collectors.toList());
