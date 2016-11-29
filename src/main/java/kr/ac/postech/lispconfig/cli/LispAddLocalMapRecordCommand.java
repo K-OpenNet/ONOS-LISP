@@ -72,6 +72,7 @@ public class LispAddLocalMapRecordCommand extends AbstractShellCommand {
 
         builder.withEidPrefixAfi(new LispIpv4Address(IpAddress.valueOf(eid)));
         builder.withMaskLength(eid_mask);
+        builder.withRecordTtl(1);
 
         DefaultLispLocatorRecord.DefaultLocatorRecordBuilder locatorRecordBuilder
                 = new DefaultLispLocatorRecord.DefaultLocatorRecordBuilder();
