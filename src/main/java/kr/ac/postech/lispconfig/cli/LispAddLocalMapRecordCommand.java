@@ -22,12 +22,10 @@ import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
 import org.onlab.packet.IpAddress;
 import org.onosproject.cli.AbstractShellCommand;
-import org.onosproject.lisp.msg.protocols.DefaultLispLocatorRecord;
+import org.onosproject.lisp.msg.protocols.DefaultLispLocator;
 import org.onosproject.lisp.msg.protocols.DefaultLispMapRecord;
 import org.onosproject.lisp.msg.types.LispIpv4Address;
 import org.onosproject.net.DeviceId;
-
-import java.util.Collections;
 
 /**
  * LISP configuration GET command
@@ -74,8 +72,8 @@ public class LispAddLocalMapRecordCommand extends AbstractShellCommand {
         builder.withMaskLength(eid_mask);
         builder.withRecordTtl(1);
 
-        DefaultLispLocatorRecord.DefaultLocatorRecordBuilder locatorRecordBuilder
-                = new DefaultLispLocatorRecord.DefaultLocatorRecordBuilder();
+        DefaultLispLocator.DefaultLocatorBuilder locatorRecordBuilder
+                = new DefaultLispLocator.DefaultLocatorBuilder();
 
         locatorRecordBuilder.withLocatorAfi(new LispIpv4Address(IpAddress.valueOf(rloc)));
         locatorRecordBuilder.withPriority(priority);

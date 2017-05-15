@@ -13,7 +13,10 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>kr.ac.postech</groupId>
@@ -36,7 +39,8 @@
         <onos.app.url>http://www.postech.ac.kr/dpnm</onos.app.url>
         <web.context>/onos/lispconfig</web.context>
         <api.title>Sample app REST API</api.title>
-        <onos.app.readme>This is yang/netconf base LISP configuration app</onos.app.readme>
+        <onos.app.readme>This is yang/netconf base LISP configuration app
+        </onos.app.readme>
         <api.package>kr.ac.postech</api.package>
         <onos.app.requires>
             org.onosproject.netconf,
@@ -89,72 +93,71 @@
         <dependency>
             <groupId>org.onosproject</groupId>
             <artifactId>onos-netconf-api</artifactId>
-            <version>1.8.0-SNAPSHOT</version>
+            <version>${onos.version}</version>
         </dependency>
 
         <dependency>
-      <groupId>org.onosproject</groupId>
-      <artifactId>onos-cli</artifactId>
-      <version>${onos.version}</version>
-      <scope>provided</scope>
-    </dependency>
+            <groupId>org.onosproject</groupId>
+            <artifactId>onos-cli</artifactId>
+            <version>${onos.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.core</artifactId>
-      <version>5.0.0</version>
-      <scope>provided</scope>
-    </dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>5.0.0</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
-      <groupId>org.apache.karaf.shell</groupId>
-      <artifactId>org.apache.karaf.shell.console</artifactId>
-      <version>3.0.5</version>
-      <scope>provided</scope>
-    </dependency>
+            <groupId>org.apache.karaf.shell</groupId>
+            <artifactId>org.apache.karaf.shell.console</artifactId>
+            <version>3.0.5</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.onosproject</groupId>
             <artifactId>org.apache.felix.scr.bnd</artifactId>
             <version>1.4.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-      <groupId>javax.ws.rs</groupId>
-      <artifactId>javax.ws.rs-api</artifactId>
-      <version>2.0.1</version>
-      <scope>provided</scope>
-    </dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>2.0.1</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>2.7.3</version>
-      <scope>provided</scope>
-    </dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.7.3</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
-      <groupId>org.onosproject</groupId>
-      <artifactId>onos-rest</artifactId>
-      <version>${onos.version}</version>
-      <scope>provided</scope>
-    </dependency>
+            <groupId>org.onosproject</groupId>
+            <artifactId>onos-rest</artifactId>
+            <version>${onos.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-annotations</artifactId>
-      <version>2.7.3</version>
-      <scope>provided</scope>
-    </dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.7.3</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
-      <groupId>org.glassfish.jersey.containers</groupId>
-      <artifactId>jersey-container-servlet</artifactId>
-      <version>2.22.2</version>
-      <scope>provided</scope>
-    </dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet</artifactId>
+            <version>2.22.2</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
-      <groupId>org.onosproject</groupId>
-      <artifactId>onlab-rest</artifactId>
-      <version>${onos.version}</version>
-      <scope>provided</scope>
-    </dependency>
+            <groupId>org.onosproject</groupId>
+            <artifactId>onlab-rest</artifactId>
+            <version>${onos.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
-
 
 
     <build>
@@ -165,15 +168,20 @@
                 <version>3.0.1</version>
                 <extensions>true</extensions>
                 <configuration>
-          <instructions>
-            <_wab>src/main/webapp/</_wab>
-            <Include-Resource>WEB-INF/classes/apidoc/swagger.json=target/swagger.json,
-                            {maven-resources}</Include-Resource>
-            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-            <Import-Package>*,org.glassfish.jersey.servlet</Import-Package>
-            <Web-ContextPath>${web.context}</Web-ContextPath>
-          </instructions>
-        </configuration>
+                    <instructions>
+                        <_wab>src/main/webapp/</_wab>
+                        <Include-Resource>
+                            WEB-INF/classes/apidoc/swagger.json=target/swagger.json,
+                            {maven-resources}
+                        </Include-Resource>
+                        <Bundle-SymbolicName>
+                            ${project.groupId}.${project.artifactId}
+                        </Bundle-SymbolicName>
+                        <Import-Package>*,org.glassfish.jersey.servlet
+                        </Import-Package>
+                        <Web-ContextPath>${web.context}</Web-ContextPath>
+                    </instructions>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

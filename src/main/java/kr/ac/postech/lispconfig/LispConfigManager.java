@@ -33,9 +33,8 @@ import org.onlab.packet.IpAddress;
 import org.onosproject.core.ApplicationId;
 import org.onosproject.core.CoreService;
 import org.onosproject.lisp.msg.protocols.DefaultLispMapRecord;
-import org.onosproject.lisp.msg.protocols.LispLocatorRecord;
+import org.onosproject.lisp.msg.protocols.LispLocator;
 import org.onosproject.lisp.msg.protocols.LispMapRecord;
-import org.onosproject.lisp.msg.types.LispIpv4Address;
 import org.onosproject.net.DeviceId;
 import org.onosproject.net.config.NetworkConfigService;
 import org.onosproject.net.driver.DriverHandler;
@@ -197,15 +196,15 @@ public class LispConfigManager implements LispConfigService {
             log.info("Update new map record");
             LispMapRecord oldRecord = records.get(0);
 
-            List<LispLocatorRecord> newLocators = record.getLocators();
-            List<LispLocatorRecord> oldLocators = oldRecord.getLocators();
+            List<LispLocator> newLocators = record.getLocators();
+            List<LispLocator> oldLocators = oldRecord.getLocators();
 
-            List<LispLocatorRecord> actualLocators = Lists.newArrayList();
+            List<LispLocator> actualLocators = Lists.newArrayList();
             actualLocators.addAll(newLocators);
             actualLocators.addAll(oldLocators);
 
-            for (LispLocatorRecord loc : newLocators) {
-                for (LispLocatorRecord ol : oldLocators) {
+            for (LispLocator loc : newLocators) {
+                for (LispLocator ol : oldLocators) {
                     if(loc.getLocatorAfi().equals(ol.getLocatorAfi())){
                         actualLocators.remove(ol);
                     }

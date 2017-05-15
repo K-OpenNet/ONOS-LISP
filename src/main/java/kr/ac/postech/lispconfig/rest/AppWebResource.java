@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.ImmutableList;
 import kr.ac.postech.lispconfig.LispConfigService;
 import org.onlab.packet.IpAddress;
-import org.onosproject.lisp.msg.protocols.DefaultLispLocatorRecord;
+import org.onosproject.lisp.msg.protocols.DefaultLispLocator;
 import org.onosproject.lisp.msg.protocols.DefaultLispMapRecord;
 import org.onosproject.lisp.msg.types.LispIpv4Address;
 import org.onosproject.net.DeviceId;
@@ -165,8 +165,8 @@ public class AppWebResource extends AbstractWebResource {
             builder.withMaskLength(eid_mask);
             builder.withRecordTtl(ttl);
 
-            DefaultLispLocatorRecord.DefaultLocatorRecordBuilder locatorRecordBuilder
-                    = new DefaultLispLocatorRecord.DefaultLocatorRecordBuilder();
+            DefaultLispLocator.DefaultLocatorBuilder locatorRecordBuilder
+                    = new DefaultLispLocator.DefaultLocatorBuilder();
 
             locatorRecordBuilder.withLocatorAfi(new LispIpv4Address(IpAddress.valueOf(rloc)));
             locatorRecordBuilder.withPriority(priority);
@@ -204,8 +204,8 @@ public class AppWebResource extends AbstractWebResource {
             builder.withEidPrefixAfi(new LispIpv4Address(IpAddress.valueOf(eid)));
             builder.withMaskLength(eid_mask);
 
-            DefaultLispLocatorRecord.DefaultLocatorRecordBuilder locatorRecordBuilder
-                    = new DefaultLispLocatorRecord.DefaultLocatorRecordBuilder();
+            DefaultLispLocator.DefaultLocatorBuilder locatorRecordBuilder
+                    = new DefaultLispLocator.DefaultLocatorBuilder();
 
             locatorRecordBuilder.withLocatorAfi(new LispIpv4Address(IpAddress.valueOf(rloc)));
             locatorRecordBuilder.withPriority(priority);
