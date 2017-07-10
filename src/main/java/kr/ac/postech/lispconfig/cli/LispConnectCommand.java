@@ -49,10 +49,12 @@ public class LispConnectCommand extends AbstractShellCommand {
     @Override
     protected void execute() {
         LispConfigService service = get(LispConfigService.class);
+        print("{} {}", address, port);
         boolean result = service.connectDevice(username, password, address, port);
 
         if(result){
-            print("The {} is successfully connected", address+":"+port);
+            String deviceName = address + ":" + port;
+            print("The requested device, " + deviceName + ", is successfully connected");
         }
     }
 }

@@ -64,15 +64,6 @@ public class LispConfigManager implements LispConfigService {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final static String APP_SUBJECT_CLASS_KEY = "apps";
-    private final static String DEVICE_SUBJECT_CLASS_KEY= "devices";
-
-    private final static String APP_CONFIG_KEY = "devices";
-    private final static String DEVICE_CONFIG_KEY = "basic";
-
-    private final static String DEVICE_CFG_JSON = "netconf-cfg.json";
-    private final static String NETCONF_APP_NAME = "org.onosproject.netconf";
-
     @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY)
     protected NetworkConfigService cfgService;
 
@@ -243,102 +234,47 @@ public class LispConfigManager implements LispConfigService {
     @Override
     public boolean connectDevice(String name, String password,
                                 String address, String port){
-        boolean registered = registerDevice(address, port);
-        boolean configured = configureDevice(name, password, address, port);
 
-        if(registered && configured){
-            return true;
+        //Setup netconf
+        ObjectNode nodeNetconfData = new ObjectMapper().createObjectNode();
+        nodeNetconfData.put("ip", address);
+        nodeNetconfData.put("port", port);
+        nodeNetconfData.put("username", name);
+        nodeNetconfData.put("password", password);
+
+        ObjectNode nodeNetconf = new ObjectMapper().createObjectNode();
+        nodeNetconf.set("netconf", nodeNetconfData);
+
+        ObjectNode nodeDriver = new ObjectMapper().createObjectNode();
+        nodeDriver.put("driver", "netconf");
+
+        ObjectNode nodeBasic = new ObjectMapper().createObjectNode();
+        nodeBasic.set("basic", nodeDriver);
+
+        ObjectNode nodeUnion = new ObjectMapper().createObjectNode();
+        nodeUnion.setAll(nodeNetconf);
+        nodeUnion.setAll(nodeBasic);
+
+        ObjectNode nodeDevice = new ObjectMapper().createObjectNode();
+        String newDeviceName = "netconf:"+address+":"+port;
+        DeviceId deviceId = DeviceId.deviceId(newDeviceName);
+        nodeDevice.set(newDeviceName, nodeUnion);
+
+        ObjectNode root = new ObjectMapper().createObjectNode();
+        root.set("devices", nodeDevice);
+
+        Object resultRegister = cfgService.applyConfig("devices", deviceId,
+                                        "basic",
+                                        nodeBasic.get("basic"));
+        Object resultConfigure = cfgService.applyConfig("devices", deviceId,
+                               "netconf",
+                               nodeNetconf.get("netconf"));
+
+        if (resultRegister != null && resultConfigure != null) {
+           return true;
         } else {
             return false;
         }
-    }
-
-    public boolean registerDevice(String address, String port){
-        log.info("{} {}", address, port);
-        InputStream is = null;
-        try {
-            is = context.getBundleContext().getBundle()
-                    .getEntry(DEVICE_CFG_JSON).openStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ObjectMapper mapper = new ObjectMapper();
-        JsonFactory jsonFactory = mapper.getFactory();
-        JsonParser jsonParser = null;
-        try {
-            jsonParser = jsonFactory.createParser(is);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        JsonNode jsonNode = null;
-        try {
-            jsonNode = mapper.readTree(jsonParser);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        JsonNode deviceRoot = jsonNode.get(DEVICE_SUBJECT_CLASS_KEY);
-
-        String deviceName = deviceRoot.fieldNames().next();
-        JsonNode removed = ((ObjectNode) deviceRoot).remove(deviceName);
-
-        String newDeviceName = "netconf:"+address+":"+port;
-        ((ObjectNode) deviceRoot).set(newDeviceName, removed);
-
-        DeviceId deviceId = DeviceId.deviceId(newDeviceName);
-
-        JsonNode subjectNode = deviceRoot.path(newDeviceName);
-
-        Object result = cfgService.applyConfig(DEVICE_SUBJECT_CLASS_KEY, deviceId,
-                               DEVICE_CONFIG_KEY,
-                               subjectNode.get(DEVICE_CONFIG_KEY));
-        return result != null ? true : false;
-    }
-
-    public boolean configureDevice(String name, String password,
-                                String address, String port){
-        ApplicationId netConfAppId = coreService.getAppId(NETCONF_APP_NAME);
-
-        InputStream is = null;
-        try {
-            is = context.getBundleContext().getBundle()
-                    .getEntry(DEVICE_CFG_JSON).openStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ObjectMapper mapper = new ObjectMapper();
-        JsonFactory jsonFactory = mapper.getFactory();
-        JsonParser jsonParser = null;
-        try {
-            jsonParser = jsonFactory.createParser(is);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        JsonNode jsonNode = null;
-        try {
-            jsonNode = mapper.readTree(jsonParser);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        JsonNode appRoot = jsonNode.get(APP_SUBJECT_CLASS_KEY);
-        appRoot = appRoot.get(NETCONF_APP_NAME);
-
-        jsonNode = appRoot.get(APP_CONFIG_KEY).get(0);
-
-        ((ObjectNode) jsonNode).put("name", name);
-        ((ObjectNode) jsonNode).put("password", password);
-        ((ObjectNode) jsonNode).put("ip", address);
-        ((ObjectNode) jsonNode).put("port", port);
-
-        log.info(appRoot.toString());
-
-        Object result = cfgService.applyConfig(APP_SUBJECT_CLASS_KEY, netConfAppId,
-                               APP_CONFIG_KEY, appRoot.path(APP_CONFIG_KEY));
-
-        return result != null ? true : false;
     }
 
     private boolean updateItrMapResolver(DeviceId deviceId){
